@@ -3,11 +3,7 @@
 Steps to run project
 
 ```
-source ./scripts/dev.sh
-```
-
-```
-go run main.go
+go run main.go -env=dev
 ```
 
 For windows (wsl)

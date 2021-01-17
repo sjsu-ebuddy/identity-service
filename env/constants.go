@@ -2,7 +2,6 @@ package env
 
 // String constants
 const (
-	Env        = "IDENTITY_ENV"
 	Port       = "PORT"
 	Host       = "HOST"
 	DbHost     = "DB_HOST"
@@ -11,4 +10,5 @@ const (
 	DbUser     = "DB_USER"
 	DbPass     = "DB_PASS"
 	HmacSecret = "HMAC_SECRET"
+	Namespace  = "NAMESPACE"
 )

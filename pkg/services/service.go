@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/sjsu-ebuddy/identity-service/pkg/db"
 	"gorm.io/gorm"
 )
 
@@ -20,8 +21,20 @@ type Response struct {
 
 // Service Object
 type Service struct {
-	DB *gorm.DB
-	V  *validator.Validate
+	Namespace string
+	DB        *gorm.DB
+	V         *validator.Validate
+}
+
+// UserData for response object
+type UserData struct {
+	User  *db.User `json:"user,omitempty"`
+	Token string   `json:"accessToken,omitempty"`
+}
+
+type loginFormData struct {
+	Email    string `json:"email" validate:"email"`
+	Password string `json:"password" validate:"required"`
 }
 
 // HealthCheckHandler returns OK if service is running

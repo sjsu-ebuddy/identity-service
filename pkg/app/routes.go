@@ -3,11 +3,9 @@ package app
 import (
 	"sync"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/sjsu-ebuddy/identity-service/pkg/middleware"
 	"github.com/sjsu-ebuddy/identity-service/pkg/services"
-	"gorm.io/gorm"
 )
 
 var (
@@ -16,22 +14,20 @@ var (
 )
 
 // GetRouter returns mux.Router with all the handlers preloaded
-func GetRouter(db *gorm.DB, v *validator.Validate) *mux.Router {
+func GetRouter(s *services.Service) *mux.Router {
 
 	once.Do(func() {
 		router = mux.NewRouter()
 	})
 
-	s := &services.Service{
-		DB: db,
-		V:  v,
-	}
-
 	router.Use(middleware.RequestLogger)
 	router.Use(middleware.ContentType)
 	router.HandleFunc("/", s.HealthCheckHandler)
-	router.HandleFunc("/users/register", s.ValidateUserHandler(s.CreateUserHandler)).Methods("POST")
-	// router.HandleFunc("/users/login", s.ValidateLoginData(s.UserLogin)).Methods("POST")
+	router.HandleFunc("/auth/register",
+		s.ValidateUserHandler(s.CreateUserHandler)).Methods("POST")
+	router.HandleFunc("/auth/login",
+		s.ValidateLoginData(s.UserLogin)).Methods("POST")
+	router.HandleFunc("/auth/verify", s.AuthHandler(s.VerifyAuthHandler)).Methods("GET")
 
 	return router
 }

@@ -43,7 +43,7 @@ func (user *User) BeforeCreate(tx *gorm.DB) error {
 // VerifyPassword takes plain string password and compares it with hash
 func (user *User) VerifyPassword(password string) bool {
 	hashedPwd := strings.Split(user.Password, ":")
-	derivedKey, err := scrypt.Key([]byte(user.Password), []byte(hashedPwd[0]), 1<<15, 8, 1, 32)
+	derivedKey, err := scrypt.Key([]byte(password), []byte(hashedPwd[0]), 1<<15, 8, 1, 32)
 	if err != nil {
 		log.Println(err.Error())
 		return false

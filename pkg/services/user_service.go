@@ -70,8 +70,10 @@ func (s *Service) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 		s.handleResponse(&Response{
 			StatusCode: http.StatusCreated,
-			Data:       user.FormatResponse(),
-			Message:    Success,
+			Data: &UserData{
+				User: user.FormatResponse(),
+			},
+			Message: Success,
 		}, w)
 
 		return

@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -16,14 +15,14 @@ import (
 type Server struct {
 	Addr       string
 	Handler    *mux.Router
-	httpServer *http.Server
-	wait       time.Duration
+	Wait       time.Duration
+	HTTPServer *http.Server
 }
 
 // Start method for the server
 func (srv *Server) Start() {
 
-	srv.httpServer = &http.Server{
+	srv.HTTPServer = &http.Server{
 		Addr:         srv.Addr,
 		Handler:      srv.Handler,
 		WriteTimeout: time.Second * 15,
@@ -31,13 +30,9 @@ func (srv *Server) Start() {
 		IdleTimeout:  time.Second * 60,
 	}
 
-	flag.DurationVar(&srv.wait, "graceful-timeout", time.Second*15,
-		"The duration for which the server will wait for the connections to close")
-	flag.Parse()
-
 	go func() {
 		log.Printf("Starting Server on http://%s \n", srv.Addr)
-		if err := srv.httpServer.ListenAndServe(); err != nil {
+		if err := srv.HTTPServer.ListenAndServe(); err != nil {
 			log.Fatalln(err)
 		}
 	}()
@@ -48,11 +43,11 @@ func (srv *Server) Start() {
 
 	<-c
 
-	ctx, cancel := context.WithTimeout(context.Background(), srv.wait)
+	ctx, cancel := context.WithTimeout(context.Background(), srv.Wait)
 
 	defer cancel()
 
-	srv.httpServer.Shutdown(ctx)
+	srv.HTTPServer.Shutdown(ctx)
 
 	log.Println("shutting down")
 
